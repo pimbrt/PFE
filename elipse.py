@@ -1,22 +1,15 @@
-import matplotlib.pyplot as plt
-import cv2
-from skimage import data, color, img_as_ubyte
+from skimage import io
+from skimage import data, color
 from skimage.feature import canny
 from skimage.transform import hough_ellipse
-from skimage.draw import ellipse_perimeter
 
-# Load picture, convert to grayscale and detect edges
-image_rgb = cv2.imread('tete.png',0)
+image_rgb = io.imread('coffee.png',0)
+
 image_gray = color.rgb2gray(image_rgb)
-edges = canny(image_gray, sigma=2.0,
-              low_threshold=0.55, high_threshold=0.8)
+edges = canny(image_gray, low_threshold=.4, high_threshold=.9)
 
-# Perform a Hough Transform
-# The accuracy corresponds to the bin size of a major axis.
-# The value is chosen in order to get a single high accumulator.
-# The threshold eliminates low accumulators
-result = hough_ellipse(edges, accuracy=20, threshold=250,
-                       min_size=100, max_size=120)
+result = hough_ellipse(edges, threshold=20, min_size=10)
+
 result.sort(order='accumulator')
 
 # Estimated parameters for the ellipse

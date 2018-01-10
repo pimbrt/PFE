@@ -1,50 +1,60 @@
+import cv2
+
 import numpy as np
-from skimage.transform import hough_ellipse
-result = hough_ellipse(np.zeros((100, 100)))
-from skimage import io
 
-import matplotlib.pyplot as plt
+# grab image
+orig = cv.LoadImage('tete.png')
 
-from skimage import io
-from skimage import data, color
-from skimage.feature import canny
-from skimage.transform import hough_ellipse
+# create tmp images
+grey_scale = cv.CreateImage(cv.GetSize(orig), 8, 1)
+processed = cv.CreateImage(cv.GetSize(orig), 8, 1)
 
+cv.Smooth(orig, orig, cv.CV_GAUSSIAN, 3, 3)
 
-# Load picture, convert to grayscale and detect edges
-image_rgb = io.imread('teute.png',)
+cv.CvtColor(orig, grey_scale, cv.CV_RGB2GRAY)
 
-image_gray = color.rgb2gray(image_rgb)
-edges = canny(image_gray, low_threshold=.4, high_threshold=.9)
+# do some processing on the grey scale image
+cv.Erode(grey_scale, processed, None, 10)
+cv.Dilate(processed, processed, None, 10)
+cv.Canny(processed, processed, 5, 70, 3)
+cv.Smooth(processed, processed, cv.CV_GAUSSIAN, 15, 15)
 
-# Perform a Hough Transform
-# The accuracy corresponds to the bin size of a major axis.
-# The value is chosen in order to get a single high accumulator.
-# The threshold eliminates low accumulators
-result = hough_ellipse(edges, threshold=20, min_size=10)
+#storage = cv.CreateMat(orig.width, 1, cv.CV_32FC3)
+storage = cv.CreateMemStorage(0)
 
-result.sort(order='accumulator')
+contours = cv.FindContours(processed, storage, cv.CV_RETR_EXTERNAL)
+# N.B. 'processed' image is modified by this!
 
-# Estimated parameters for the ellipse
-best = list(result[-1])
-yc, xc, a, b = [int(round(x)) for x in best[1:5]]
-orientation = best[5]
+#contours = cv.ApproxPoly (contours, storage, cv.CV_POLY_APPROX_DP, 3, 1) 
+# If you wanted to reduce the number of points...
 
-# Draw the ellipse on the original image
-cy, cx = ellipse_perimeter(yc, xc, a, b, orientation)
-image_rgb[cy, cx] = (0, 0, 255)
-# Draw the edge (white) and the resulting ellipse (red)
-edges = color.gray2rgb(img_as_ubyte(edges))
-edges[cy, cx] = (250, 0, 0)
+cv.DrawContours (orig, contours, cv.RGB(0,255,0), cv.RGB(255,0,0), 2, 3, cv.CV_AA, (0, 0)) 
 
-fig2, (ax1, ax2) = plt.subplots(ncols=2, nrows=1, figsize=(8, 4), sharex=True,
-                                sharey=True,
-                                subplot_kw={'adjustable':'box-forced'})
+def contour_iterator(contour):
+  while contour:
+    yield contour
+    contour = contour.h_next()
 
-ax1.set_title('Original picture')
-ax1.imshow(image_rgb)
+for c in contour_iterator(contours):
+  # Number of points must be more than or equal to 6 for cv.FitEllipse2
+  if len(c) >= 6:
+    # Copy the contour into an array of (x,y)s
+    PointArray2D32f = cv.CreateMat(1, len(c), cv.CV_32FC2)
 
-ax2.set_title('Edge (white) and result (red)')
-ax2.imshow(edges)
+    for (i, (x, y)) in enumerate(c):
+      PointArray2D32f[0, i] = (x, y)
 
-plt.show()
+    # Fits ellipse to current contour.
+    (center, size, angle) = cv.FitEllipse2(PointArray2D32f)
+
+    # Convert ellipse data from float to integer representation.
+    center = (cv.Round(center[0]), cv.Round(center[1]))
+    size = (cv.Round(size[0] * 0.5), cv.Round(size[1] * 0.5))
+
+    # Draw ellipse
+    cv.Ellipse(orig, center, size, angle, 0, 360, cv.RGB(255,0,0), 2,cv.CV_AA, 0)
+
+# show images
+cv.ShowImage("image - press 'q' to quit", orig)
+#cv.ShowImage("post-process", processed)
+cv.WaitKey(-1)
