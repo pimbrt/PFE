@@ -4,10 +4,10 @@ import numpy as np
 
 class find_ovale:
     def __init__(self,orig):
-        # create tmp images
+        # create tmp images changer 3 ?
        
-        self.grey_scale = np.zeros((orig.shape[0],orig.shape[1]),np.uint8)
-        self.processed = np.zeros((orig.shape[0],orig.shape[1]),np.uint8)
+        self.grey_scale = np.zeros((orig.shape[0],orig.shape[1],3),np.uint8)
+        self.processed = np.zeros((orig.shape[0],orig.shape[1],3),np.uint8)
         self.kernel = np.ones((2,2),np.uint8)
         
         orig=self.blur(orig,3)
@@ -26,9 +26,7 @@ class find_ovale:
         box=self.draw_contours(cnt)
         cv2.ellipse(orig,box,(0,0,200), 2)
         # show images
-        cv2.imshow("image - press 'q' to quit", orig)
-        #cv.ShowImage("post-process", processed)
-        cv2.waitKey(-1)
+        return orig
 
         
     def blur(self,orig,mask):
@@ -59,7 +57,3 @@ class find_ovale:
         
         
         return cv2.fitEllipse(top_c)
-
-# grab image
-orig=cv2.imread('image/result1.jpg')
-find_ovale(orig)
