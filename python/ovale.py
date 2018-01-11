@@ -1,57 +1,65 @@
 import cv2
 import numpy as np
 
+
+class find_ovale:
+    def __init__(self,orig):
+        # create tmp images
+       
+        self.grey_scale = np.zeros((orig.shape[0],orig.shape[1]),np.uint8)
+        self.processed = np.zeros((orig.shape[0],orig.shape[1]),np.uint8)
+        self.kernel = np.ones((2,2),np.uint8)
+        
+        orig=self.blur(orig,3)
+        
+        self.grey_scale=cv2.cvtColor(orig, cv2.COLOR_RGB2GRAY)
+    
+        self.processed=self.erode(2)
+        self.processed=self.dilate(2)
+        
+        self.processed=cv2.Canny(self.processed,100,200)
+        
+        orig=self.blur(orig,1)
+        
+        cnt=self.find_contour()
+        
+        box=self.draw_contours(cnt)
+        cv2.ellipse(orig,box,(0,0,200), 2)
+        # show images
+        cv2.imshow("image - press 'q' to quit", orig)
+        #cv.ShowImage("post-process", processed)
+        cv2.waitKey(-1)
+
+        
+    def blur(self,orig,mask):
+        return cv2.GaussianBlur(orig,(mask,mask),0)
+    
+    def erode(self,number_it):
+        return cv2.erode(self.grey_scale,self.kernel,iterations =number_it)
+
+    def dilate(self,number_it):
+        return cv2.dilate(self.grey_scale,self.kernel,iterations = number_it)
+
+    def find_contour(self):
+
+        ret,thresh = cv2.threshold(self.processed,127,255,0)
+        im2,self.contours,hierarchy = cv2.findContours(thresh, 1, 2)
+        return self.contours[0]
+    
+    def draw_contours(self,cnt):
+
+        cv2.drawContours (self.processed, [cnt], 0,(0,0,255),3)
+        
+        top_contours=0
+        for c in self.contours:
+          # Number of points must be more than or equal to 6 for cv.FitEllipse2
+          if top_contours<len(c):
+              top_contours=len(c)
+              top_c=c
+        
+        
+        return cv2.fitEllipse(top_c)
+
 # grab image
-orig = cv2.imread('result1.jpg')
-
-# create tmp images
-grey_scale = np.zeros((orig.shape[0],orig.shape[1]),np.uint8)
-processed = np.zeros((orig.shape[0],orig.shape[1]),np.uint8)
-
-orig=cv2.GaussianBlur(orig,(3,3),0)
-
-grey_scale=cv2.cvtColor(orig, cv2.COLOR_RGB2GRAY)
-
-# do some processing on the grey scale image
-kernel = np.ones((2,2),np.uint8)
-
-processed=cv2.erode(grey_scale,kernel,iterations =2)
-processed=cv2.dilate(grey_scale,kernel,iterations =2)
-
-processed=cv2.Canny(processed,100,200)
-#cv2.Canny(processed, processed, 5, 70, 3)
-#cv2.Smooth(processed, processed, cv2.CV_GAUSSIAN, 15, 15)
-processed=cv2.GaussianBlur(processed,(1,1),0)
-
-
-#storage = cv.CreateMat(orig.width, 1, cv.CV_32FC3)
-
-ret,thresh = cv2.threshold(processed,127,255,0)
-im2,contours,hierarchy = cv2.findContours(thresh, 1, 2)
-cnt = contours[0]
-
-#contours = cv.FindContours(processed, storage, cv2.CV_RETR_EXTERNAL)
-
-# N.B. 'processed' image is modified by this!
-
-#contours = cv.ApproxPoly (contours, storage, cv.CV_POLY_APPROX_DP, 3, 1) 
-# If you wanted to reduce the number of points...
-
-cv2.drawContours (processed, [cnt], 0,(0,0,255),3)
-
-
-top_contours=0
-
-for c in contours:
-  # Number of points must be more than or equal to 6 for cv.FitEllipse2
-  if top_contours<len(c):
-      top_contours=len(c)
-      top_c=c
-
-
-box = cv2.fitEllipse(top_c)
-cv2.ellipse(orig,box,(0,0,200), 2)
-# show images
-cv2.imshow("image - press 'q' to quit", orig)
-#cv.ShowImage("post-process", processed)
-cv2.waitKey(-1)
+orig=cv2.imread('image/result1.jpg')
+find_ovale(orig)
