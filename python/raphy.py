@@ -1,31 +1,36 @@
 import cv2
-import picamera
+#import picamera
 import numpy as np
 import time
 import ovale
 import full_ellipse as fe
 import Angle as agl
 
+
+
 class take_pictures:
     def __init__(self):
-        self.img,self.img2 = self.shoot(self)
         self.img=self.take_one_pic()
+        print("FIRST IMAGE: IMPORTATION...OK")
         self.img=self.give_me_ellipse(self.img)
+        print("FIRST IMAGE: ELLIPSE SAVED...OK")
         
         while 1==1:
             self.shoot()
+            print("SECOND IMAGE: IMPORTATION...OK")
             self.img2=self.give_me_ellipse(self.img2)
-            cle,maxi,img3=agl.head_position(self.img1,self.img2)
+            print("SECOND IMAGE: ELLIPSE SAVED...OK")
+            cle,maxi,img3=agl.head_position(self.img,self.img2)
             print (cle,maxi)
             cv2.imshow("",img3)
             
             
     def pre_traitement(self,image):
         kernel = np.ones((15,15),np.uint8)
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY) # transformation en gris
-        image = cv2.Canny(image,150,150)#Je sais pas trop à quoi ça sert mais sans ça ne marche pas
-        image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
-        return image
+        image_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY) # transformation en gris
+        image_canny = cv2.Canny(image_gray,150,150)#Je sais pas trop à quoi ça sert mais sans ça ne marche pas
+        image_final = cv2.morphologyEx(image_canny, cv2.MORPH_CLOSE, kernel)
+        return image_final
         
         
     def shoot(self):
@@ -34,19 +39,29 @@ class take_pictures:
         
 
     def take_one_pic(self):
-        camera = picamera.PiCamera()	
-        camera.capture('tmp.jpg')
+        #camera = picamera.PiCamera()	
+        #camera.capture('tmp.jpg')
+        camera = cv2.VideoCapture(0)
+        image = camera.read()[1]
+        cv2.imwrite('tmp.jpg',image)
         return cv2.imread('tmp.jpg')
 
     def give_me_ellipse(self,image):
         image=self.pre_traitement(image)
-        image=ovale.find_ovale(image)
+        print('IMAGE: PRE_TRAITEMENT...OK')
+        
+        ovale.find_ovale(image)
+        image=cv2.imread('tmp.jpg')
+        print('IMAGE: OVALE...OK')
+        
         image=fe.make_ellipse_full(image)
+        image=cv2.imread('tmp.jpg')
+        print('IMAGE: ELLIPSE...OK')
         return image
     
 
 
-
+take_pictures()
 """
 you can apply a horizontal and vertical flip
 camera.hflip = True

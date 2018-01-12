@@ -46,8 +46,8 @@ class head_position:
         if seuilx2-seuilx1>30:
             ecart=seuilx2-seuilx1
         return ecart
-    def substract_ellipse(self,ligne,colonne,ecart):
-       
+    
+    def substract_ellipse(self,ligne,colonne,ecart):   
         xmax=0
         xmin=colonne
         ymax=0
@@ -58,9 +58,9 @@ class head_position:
                 pixel1 = self.img1[i,j] # récupération du pixel
                 pixel2 = self.img2[i,j+ecart] # récupération du pixel
              
-                red=int(pixel2[0])-int(pixel1[0])
+                red=int(pixel2[2])-int(pixel1[2])
                 green=int(pixel2[1])-int(pixel1[1])
-                blue=int(pixel2[2])-int(pixel1[2])
+                blue=int(pixel2[0])-int(pixel1[0])
             
                 if red+green+blue>-50 and red+green+blue<50:#peut être grossit
                     p=[255,255,255]
@@ -112,7 +112,7 @@ class head_position:
                     tete['bottom_left']=tete['bottom_left']+1
                     
             for j in range(xmin+int((xmax-xmin)/2),xmax):
-                pixel = self.imgS[j,i] # récupération du pixel
+                pixel = self.imgS[i,j] # récupération du pixel
             
                 if pixel[1]==255 and pixel[0]==0:
                     tete['bottom_right']= tete['bottom_right']+1

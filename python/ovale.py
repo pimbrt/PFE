@@ -10,6 +10,8 @@ class find_ovale:
         self.processed = np.zeros((orig.shape[0],orig.shape[1],3),np.uint8)
         self.kernel = np.ones((2,2),np.uint8)
         
+        orig=cv2.cvtColor(orig, cv2.COLOR_GRAY2RGB)
+        
         orig=self.blur(orig,3)
         
         self.grey_scale=cv2.cvtColor(orig, cv2.COLOR_RGB2GRAY)
@@ -26,7 +28,8 @@ class find_ovale:
         box=self.draw_contours(cnt)
         cv2.ellipse(orig,box,(0,0,200), 2)
         # show images
-        return orig
+        cv2.imwrite('tmp.jpg',orig)
+
 
         
     def blur(self,orig,mask):
