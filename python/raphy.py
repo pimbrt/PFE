@@ -1,5 +1,7 @@
+#!/usr/bin/python3.6
+# -*-coding:Latin-1 -*
 import cv2
-#import picamera
+import picamera
 import numpy as np
 import time
 import ovale
@@ -39,10 +41,10 @@ class take_pictures:
         
 
     def take_one_pic(self):
-        #camera = picamera.PiCamera()	
-        #camera.capture('tmp.jpg')
-        camera = cv2.VideoCapture(0)
-        image = camera.read()[1]
+        camera = picamera.PiCamera()	
+        camera.capture('tmp.jpg')
+        #camera = cv2.VideoCapture(0)
+        #image = camera.read()[1]
         cv2.imwrite('tmp.jpg',image)
         return cv2.imread('tmp.jpg')
 
