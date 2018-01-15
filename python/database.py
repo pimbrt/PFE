@@ -1,54 +1,95 @@
 #!/usr/bin/python3.6
 # -*-coding:Latin-1 -*
 
-#import MySQLdb
-
-# On créé un dictionnaire contenant les paramètres de connexion MySQL
+import MySQLdb
+from datetime import datetime
+#si marche pas changer ' par `
+# On crÃ©Ã© un dictionnaire contenant les paramÃ¨tres de connexion MySQL
 paramMysql = {
     'host'   : 'localhost',
     'user'   : 'root',
     'passwd' : 'root',
-    'db'     : 'test_db'
+    'db'     : 'raphy_pfe'
 }
+
+enfant_id = 1 
 
 
 class database:
-    def __init__(self,angle):
-        if angle>=0 and angle<45:
-            zone=1
-        if angle>=45 and angle<80:
-            zone=2
-        if angle>=80 and angle<100:
-            zone=3
-        if angle>=100 and angle<135:
-            zone=4
-        if angle>=135 and angle<180:
-            zone=5
+    def __init__(self,angle,first_pic_or_second):
+        if first_pic_or_second==1:
+            #changer la date seulement
+            self.update_db('positions','Date_mesure','CURRENT_TIMESTAMP') 
+            print("done")
+            print("stop")
+        else:
+            db=self.select_db('*','positions')#timer [0  2 ?]
+            timer=db[0]['Date_mesure']
+            if angle>=0 and angle<45:
+                zone="secteur1"
+            elif angle>=45 and angle<80:
+                zone="secteur2"
+            elif angle>=80 and angle<100:
+                zone="secteur3"
+            elif angle>=100 and angle<135:
+                zone="secteur4"
+            elif angle>=135 and angle<180:
+                zone="secteur5"
+            else:
+                print("ERROR")
+            #ici time=actualtime-oldtime
+            timer = str(timer)
+            timer = datetime(int(timer[0]+timer[1]+timer[2]+timer[3]),int(timer[5]+timer[6]),int(timer[8]+timer[9]),int(timer[11]+timer[12]),int(timer[14]+timer[15]),int(timer[17]+timer[18]))
+            timer=datetime.now()-timer
+            timer=timer.seconds+db[0][zone]
+            
+            self.update_db('positions',zone,timer)
         
-        self.insert_to_sql(zone)
-    def insert_to_sql(self,zone):
-        #ajouter zone là
+        
+    def update_db(self,fraum,zone,timer):
+        #ajouter zone lÃ 
         sql = """\
-        INSERT INTO people
-        (nom)
-        VALUES ('DROUET')
-        """
+        UPDATE `"""+str(fraum)+"""` SET `"""+str(zone)+"""`="""+str(timer)+""",  `Date_mesure`=CURRENT_TIMESTAMP WHERE  `enfant_id` = """+str(enfant_id)+""" """
+        print(sql)
         self.send_to_db(sql)
+    def select_db(self,what,fraum):
+        sql = """\
+        SELECT """+str(what)+""" FROM """+str(fraum)+"""
+        WHERE enfant_id = """+str(enfant_id)
+        
+        try:
+            # On  crÃ©Ã© une conexion MySQL
+            conn = MySQLdb.connect(**paramMysql)
+            # On crÃ©Ã© un curseur MySQL
+            cur = conn.cursor(MySQLdb.cursors.DictCursor)
+            # On exÃ©cute la requÃªte SQL
+            cur.execute(sql)
+            # On rÃ©cupÃ¨re toutes les lignes du rÃ©sultat de la requÃªte
+            rows = cur.fetchall()
+            # On parcourt toutes les lignes
+            #for row in rows:
+                # Pour rÃ©cupÃ©rer les diffÃ©rentes valeurs des diffÃ©rents champs
+                #valeur1 = row['monchamp1']
+                #valeur2 = row['monchamp2']
+                #valeur3 = row['monchamp3']
+                # etc etc ...
+            
+            return rows
+        except MySQLdb.Error, e:
+            # En cas d'anomalie
+            print "Error %d: %s" % (e.args[0],e.args[1])
+         
+        
 
     def send_to_db(self,sql):
-        print("plus tard")
-        '''
-        On va faire comme si on obtenait correctement box, du coup on connait l'angle
-        box=90+box
-        on prend le temps d'aujourd'hui on suppose que depuis la derniere prise il n y a pas eu de mouvemebt resultat on selecte les bonnes infos dans la bdd et on additionne en parler à edouard ça serait plus simple que le laisser tout additionner
-        '''''''
+
         try:
-            # On  créé une conexion MySQL
+            # On  crÃ©Ã© une conexion MySQL
             conn = MySQLdb.connect(**paramMysql)
-            # On créé un curseur MySQL
+            # On crÃ©Ã© un curseur MySQL
             cur = conn.cursor()
             try:
-                # On exécute la requête SQL
+                # On exÃ©cute la requÃªte SQL
                 cur.execute(sql)
                 # On commit
                 conn.commit()
@@ -59,10 +100,13 @@ class database:
         except MySQLdb.Error, e:
             # En cas d'anomalie
             print "Error %d: %s" % (e.args[0],e.args[1])
-            sys.exit(1)
+            
         
         #finally:
             # On ferme la connexion
             #if conn:
              #   conn.close()
-        '''
+
+             
+#import time    
+#time.strftime('%Y-%m-%d %H:%M:%S')

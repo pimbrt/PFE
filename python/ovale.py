@@ -8,7 +8,7 @@ from math import pi
 #import database as db
 
 class find_ovale:
-    def __init__(self,orig):
+    def __init__(self,orig,first_pic_or_second):
         # create tmp images changer 3 ?
        #initialisation des valeus
         self.grey_scale = np.zeros((orig.shape[0],orig.shape[1],3),np.uint8)
@@ -30,15 +30,16 @@ class find_ovale:
         box=self.draw_contours(cnt)
         cv2.ellipse(orig,box,(0,0,200), 2)
         print(box)
-        cv2.line(orig,(int(box[0][0]),int(box[0][1])),(int(box[0][0]+sin(0)*box[1][1]/2),int(box[0][1]-cos(0)*box[1][1]/2)),(0,255,0),2)
-        cv2.line(orig,(int(box[0][0]),int(box[0][1])),(int(box[0][0]-sin(180*box[2]/pi)*box[1][1]/2),int(box[0][1]-cos(180*box[2]/pi)*box[1][1]/2)),(0,255,0),2)
+        cv2.line(orig,(int(box[0][0]),int(box[0][1])),(int(box[0][0]+sin(-pi/2)*box[1][1]/2),int(box[0][1]-cos(-pi/2)*box[1][1]/2)),(255,0,0),2)
+        cv2.line(orig,(int(box[0][0]),int(box[0][1])),(int(box[0][0]-sin(180*box[2]/pi)*box[1][1]/2),int(box[0][1]-cos(180*box[2]/pi)*box[1][1]/2)),(255,0,0),2)
+
         print('*******OVALE...OK')
         print("ANGLE: ")
-        print(int(box[2]))
+        print(int(box[2])+90)
         
         #on envoie le résultat à la base de données
         #angle=box[2]+90
-        #db.database(angle)
+        #db.database(angle,first_pic_or_second)
 
 
         '''

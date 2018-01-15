@@ -9,11 +9,18 @@ import ovale
 
 
 class take_pictures:
-    def __init__(self):        
+    def __init__(self):   
+        first_pic_or_second=1
+        self.img=self.take_one_pic()
+        print("IMAGE: IMPORTATION...OK")
+        self.img=self.give_me_ellipse(self.img,first_pic_or_second)
+        print("*******ELLIPSE SAVED...OK")
+        
+        first_pic_or_second=2
         while 1==1:
             self.shoot()
             print("IMAGE: IMPORTATION...OK")
-            self.img=self.give_me_ellipse(self.img)
+            self.img=self.give_me_ellipse(self.img,first_pic_or_second)
             print("*******ELLIPSE SAVED...OK")
             
             
@@ -38,11 +45,11 @@ class take_pictures:
         cv2.imwrite('tmp.jpg',image)
         return cv2.imread('tmp.jpg')
 
-    def give_me_ellipse(self,image):
+    def give_me_ellipse(self,image,first_pic_or_second):
         image=self.pre_traitement(image)
         print('*******PRE_TRAITEMENT...OK')
         
-        ovale.find_ovale(image)
+        ovale.find_ovale(image,first_pic_or_second)
         image=cv2.imread('tmp.jpg')
         
         
