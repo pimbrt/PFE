@@ -1,30 +1,20 @@
 #!/usr/bin/python3.6
 # -*-coding:Latin-1 -*
 import cv2
-import picamera
+#import picamera
 import numpy as np
 import time
 import ovale
-import full_ellipse as fe
-import Angle as agl
 
 
 
 class take_pictures:
-    def __init__(self):
-        self.img=self.take_one_pic()
-        print("FIRST IMAGE: IMPORTATION...OK")
-        self.img=self.give_me_ellipse(self.img)
-        print("FIRST IMAGE: ELLIPSE SAVED...OK")
-        
+    def __init__(self):        
         while 1==1:
             self.shoot()
-            print("SECOND IMAGE: IMPORTATION...OK")
-            self.img2=self.give_me_ellipse(self.img2)
-            print("SECOND IMAGE: ELLIPSE SAVED...OK")
-            cle,maxi,img3=agl.head_position(self.img,self.img2)
-            print (cle,maxi)
-            cv2.imshow("",img3)
+            print("IMAGE: IMPORTATION...OK")
+            self.img=self.give_me_ellipse(self.img)
+            print("*******ELLIPSE SAVED...OK")
             
             
     def pre_traitement(self,image):
@@ -37,29 +27,29 @@ class take_pictures:
         
     def shoot(self):
         time.sleep(10)
-        self.img2=self.take_one_pic()
+        self.img=self.take_one_pic()
         
 
     def take_one_pic(self):
-        camera = picamera.PiCamera()	
-        camera.capture('tmp.jpg')
-        #camera = cv2.VideoCapture(0)
-        #image = camera.read()[1]
+        #camera = picamera.PiCamera()	
+        #camera.capture('tmp.jpg')
+        camera = cv2.VideoCapture(0)
+        image = camera.read()[1]
         cv2.imwrite('tmp.jpg',image)
         return cv2.imread('tmp.jpg')
 
     def give_me_ellipse(self,image):
         image=self.pre_traitement(image)
-        print('IMAGE: PRE_TRAITEMENT...OK')
+        print('*******PRE_TRAITEMENT...OK')
         
         ovale.find_ovale(image)
         image=cv2.imread('tmp.jpg')
-        print('IMAGE: OVALE...OK')
         
-        image=fe.make_ellipse_full(image)
-        image=cv2.imread('tmp.jpg')
-        print('IMAGE: ELLIPSE...OK')
+        
         return image
+   
+    
+    
     
 
 

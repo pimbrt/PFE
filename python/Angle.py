@@ -27,7 +27,9 @@ class head_position:
         
         
     def find_ecart(self,ligne,colonne):
-        
+        '''
+        N'importe quoi on  va changer
+        '''
         seuilx1=0
         seuilx2=0
         seuily1=0
@@ -36,15 +38,16 @@ class head_position:
             for j in range(colonne):
                 pixel1 = self.img1[i,j] # récupération du pixel
                 pixel2 = self.img2[i,j] # récupération du pixel
-                if pixel1[0]==0 and seuily1<i:
+                if pixel1[2]==255 and seuily1<i:
                     seuily1=i
                     seuilx1=j
-                if pixel2[0]==0 and seuily2<i:
+                if pixel2[2]==255 and seuily2<i:
                     seuily2=i
                     seuilx2=j
         ecart=0    
         if seuilx2-seuilx1>30:
             ecart=seuilx2-seuilx1
+            
         return ecart
     
     def substract_ellipse(self,ligne,colonne,ecart):   
@@ -90,7 +93,7 @@ class head_position:
 
 
     def determine_position(self,xmin,ymin,xmax,ymax):
-        tete={'top_left':0,'top_right':0,'bottom_left':0,'bottom_right':0}
+        tete={'top_left':0,'top_right':0,'bottom_left':0,'bottom_right':0,'centre':0}
 
         for i in range(ymin,ymin+int((ymax-ymin)/2)):
             for j in range(xmin,xmin+int((xmax-xmin)/2)):
@@ -122,7 +125,8 @@ class head_position:
         cv2.line(self.imgS,(xmax,ymax), (xmin,ymax),(0,0,255),2) 
         cv2.line(self.imgS,(xmin+int((xmax-xmin)/2),ymin), (xmin+int((xmax-xmin)/2),ymax),(0,0,255),2) 
         cv2.line(self.imgS,(xmax,ymin+int((ymax-ymin)/2)), (xmin,ymin+int((ymax-ymin)/2)),(0,0,255),2) 
-        
+        cv2.line(self.imgS,(xmin+int((xmax-xmin)/2),ymin+int((ymax-ymin)/2)), (xmin+3*int((xmax-xmin)/4),ymin),(0,0,255),2) 
+        cv2.line(self.imgS,(xmin+int((xmax-xmin)/2),ymin+int((ymax-ymin)/2)), (xmin+1*int((xmax-xmin)/4),ymin),(0,0,255),2)
         
         maxi=0
         cle=""
