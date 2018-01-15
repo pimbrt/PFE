@@ -11,7 +11,8 @@ import ovale
 class take_pictures:
     def __init__(self):   
         first_pic_or_second=1
-        self.img=self.take_one_pic()
+        #self.img=self.take_one_pic()
+        self.img=cv2.imread("image/testtete.jpg")
         print("IMAGE: IMPORTATION...OK")
         self.img=self.give_me_ellipse(self.img,first_pic_or_second)
         print("*******ELLIPSE SAVED...OK")
@@ -48,6 +49,7 @@ class take_pictures:
     def give_me_ellipse(self,image,first_pic_or_second):
         image=self.pre_traitement(image)
         print('*******PRE_TRAITEMENT...OK')
+        image=cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
         
         ovale.find_ovale(image,first_pic_or_second)
         image=cv2.imread('tmp.jpg')

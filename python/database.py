@@ -9,7 +9,7 @@ paramMysql = {
     'host'   : 'localhost',
     'user'   : 'root',
     'passwd' : 'root',
-    'db'     : 'raphy_pfe'
+    'db'     : 'test_db'
 }
 
 enfant_id = 1 
@@ -21,10 +21,10 @@ class database:
             #changer la date seulement
             self.update_db('positions','Date_mesure','CURRENT_TIMESTAMP') 
             print("done")
-            print("stop")
+            sys.exit(1)
         else:
             db=self.select_db('*','positions')#timer [0  2 ?]
-            timer=db[0]['Date_mesure']
+            timer=db['Date_mesure']
             if angle>=0 and angle<45:
                 zone="secteur1"
             elif angle>=45 and angle<80:
@@ -38,10 +38,9 @@ class database:
             else:
                 print("ERROR")
             #ici time=actualtime-oldtime
-            timer = str(timer)
-            timer = datetime(int(timer[0]+timer[1]+timer[2]+timer[3]),int(timer[5]+timer[6]),int(timer[8]+timer[9]),int(timer[11]+timer[12]),int(timer[14]+timer[15]),int(timer[17]+timer[18]))
+            timer = datetime.datetime(int(timer[0]+timer[1]+timer[2]+timer[3]),int(timer[5]+timer[6]),int(timer[8]+timer[9]),int(timer[11]+timer[12]),int(timer[14]+timer[15]),int(timer[17]+timer[18]))
             timer=datetime.now()-timer
-            timer=timer.seconds+db[0][zone]
+            timer=timer.seconds+db[zone]
             
             self.update_db('positions',zone,timer)
         
@@ -49,13 +48,14 @@ class database:
     def update_db(self,fraum,zone,timer):
         #ajouter zone lÃ 
         sql = """\
-        UPDATE `"""+str(fraum)+"""` SET `"""+str(zone)+"""`="""+str(timer)+""",  `Date_mesure`=CURRENT_TIMESTAMP WHERE  `enfant_id` = """+str(enfant_id)+""" """
-        print(sql)
+        UPDATE '"""+str(fraum)+"""' SET '"""+str(zone)+"""'="""+str(timer)+""" WHERE  enfant_id = '"""+str(enfant_id)+""""'
+        """
         self.send_to_db(sql)
     def select_db(self,what,fraum):
         sql = """\
         SELECT """+str(what)+""" FROM """+str(fraum)+"""
-        WHERE enfant_id = """+str(enfant_id)
+        WHERE enfant_id = '"""+str(enfant_id)+""""'
+        """
         
         try:
             # On  crÃ©Ã© une conexion MySQL
@@ -106,7 +106,7 @@ class database:
             # On ferme la connexion
             #if conn:
              #   conn.close()
-
+database(57,1)
              
 #import time    
 #time.strftime('%Y-%m-%d %H:%M:%S')
