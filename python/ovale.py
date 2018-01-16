@@ -47,7 +47,7 @@ class find_ovale:
         
         angle=(self.arrondi(box[2])+90)
         if angle>180:
-            angle=angle-180
+            angle=angle-90
         
         print("*******ANGLE: "+str(int(angle)))
 
