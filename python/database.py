@@ -16,7 +16,7 @@ enfant_id = 1
 
 
 class database:
-    def __init__(self,angle,first_pic_or_second):
+    def __init__(self,angle,length,ODL,ODR,first_pic_or_second):
         if first_pic_or_second==1:
             #changer la date seulement
             self.update_db('positions','Date_mesure','CURRENT_TIMESTAMP') 
@@ -24,7 +24,7 @@ class database:
             sys.exit(1)
         else:
             db=self.select_db('*','positions')#timer [0  2 ?]
-            timer=db['Date_mesure']
+            timer=str(db['Date_mesure'])
             if angle>=0 and angle<45:
                 zone="secteur1"
             elif angle>=45 and angle<80:
@@ -38,11 +38,15 @@ class database:
             else:
                 print("ERROR")
             #ici time=actualtime-oldtime
-            timer = datetime.datetime(int(timer[0]+timer[1]+timer[2]+timer[3]),int(timer[5]+timer[6]),int(timer[8]+timer[9]),int(timer[11]+timer[12]),int(timer[14]+timer[15]),int(timer[17]+timer[18]))
+            timer = datetime(int(timer[0]+timer[1]+timer[2]+timer[3]),int(timer[5]+timer[6]),int(timer[8]+timer[9]),int(timer[11]+timer[12]),int(timer[14]+timer[15]),int(timer[17]+timer[18]))
             timer=datetime.now()-timer
             timer=timer.seconds+db[zone]
-            
-            self.update_db('positions',zone,timer)
+            #si ça mache pas il faut créer la ligne avant
+            sql = """\
+            UPDATE 'datas' SET 'largeur'="""+str(length[0])+""", 'longueur'="""+str(length[1])+""", 'ODL'="""+str(ODL)+""", 'ODR'="""+str(ODR)+""" WHERE  enfant_id = '"""+str(enfant_id)+""""'
+            """
+            self.send_to_db(sql)
+                
         
         
     def update_db(self,fraum,zone,timer):
@@ -106,7 +110,7 @@ class database:
             # On ferme la connexion
             #if conn:
              #   conn.close()
-database(57,1)
+#database(57,1)
              
 #import time    
 #time.strftime('%Y-%m-%d %H:%M:%S')

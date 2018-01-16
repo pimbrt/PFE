@@ -11,8 +11,8 @@ import ovale
 class take_pictures:
     def __init__(self):   
         first_pic_or_second=1
-        #self.img=self.take_one_pic()
-        self.img=cv2.imread("image/testtete.jpg")
+        self.img=self.take_one_pic()
+        #self.img=cv2.imread("image/testtete.jpg")
         print("IMAGE: IMPORTATION...OK")
         self.img=self.give_me_ellipse(self.img,first_pic_or_second)
         print("*******ELLIPSE SAVED...OK")
