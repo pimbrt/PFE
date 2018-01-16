@@ -6,7 +6,7 @@ from math import sin
 from math import cos
 from math import pi
 from math import sqrt
-import database as db
+#import database as db
 
 class find_ovale:
     def __init__(self,orig,first_pic_or_second):
@@ -31,19 +31,21 @@ class find_ovale:
         
         box=self.draw_contours(cnt)
         cv2.ellipse(self.final,box,(0,0,200), 2)
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]-sin(-pi+180*box[2]/pi)*box[1][1]/2),self.arrondi(box[0][1]-cos(-pi+180*box[2]/pi)*box[1][1]/2)),(255,0,0),2)
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]-sin(180*box[2]/pi)*box[1][1]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi)*box[1][1]/2)),(255,0,0),2)
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]-sin(180*box[2]/pi-pi/2)*box[1][0]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi-pi/2)*box[1][0]/2)),(255,0,0),2)
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]-sin(180*box[2]/pi+pi/2)*box[1][0]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi+pi/2)*box[1][0]/2)),(255,0,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(-pi+180*box[2]/pi)*box[1][0]/2),self.arrondi(box[0][1]-cos(-pi+180*box[2]/pi)*box[1][0]/2)),(255,0,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(180*box[2]/pi)*box[1][0]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi)*box[1][0]/2)),(255,0,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(180*box[2]/pi-pi/2)*box[1][1]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi-pi/2)*box[1][1]/2)),(255,0,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(180*box[2]/pi+pi/2)*box[1][1]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi+pi/2)*box[1][1]/2)),(255,0,0),2)
         
         
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]-sin(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),self.arrondi(box[0][1]-cos(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2)),(0,255,0),2)
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]-sin(3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),self.arrondi(box[0][1]-cos(3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2)),(0,255,0),2)
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]-sin(-pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),self.arrondi(box[0][1]-cos(-pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2)),(0,255,0),2)
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]-sin(-3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),self.arrondi(box[0][1]-cos(-3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2)),(0,255,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),self.arrondi(box[0][1]-cos(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2)),(0,255,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),self.arrondi(box[0][1]-cos(3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2)),(0,255,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(-pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),self.arrondi(box[0][1]-cos(-pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2)),(0,255,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(-3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),self.arrondi(box[0][1]-cos(-3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2)),(0,255,0),2)
         
         print('*******OVALE...OK')
-        print("*******ANGLE: "+str(int(box[2])+90))
+        
+        angle=(self.arrondi(box[2])+90)%180
+        print("*******ANGLE: "+str(int(angle)+90))
 
         #Calcul des diagonales ODR ODL
         print(int(box[0][0]-sin(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][1]-cos(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][0]-sin(-3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][1]-cos(-3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2))
@@ -51,8 +53,8 @@ class find_ovale:
         ODR = self.Norme(int(box[0][0]-sin(3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][1]-cos(3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][0]-sin(-pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][1]-cos(-pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2))
         print('*******DIAGONAL_FRONTO_OCCIPITAL...OK')
         #on envoie le résultat à la base de données
-        angle=box[2]+90
-        db.database(angle,box[1],ODL,ODR,first_pic_or_second)
+
+        #db.database(angle,box[1],ODL,ODR,first_pic_or_second)
 
 
         # show images
@@ -101,4 +103,4 @@ class find_ovale:
             return int(nb[0])
 
 
-#find_ovale(cv2.imread("image/fig2.jpg"),1)
+find_ovale(cv2.imread("image/fig2.jpg"),1)
