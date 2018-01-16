@@ -19,11 +19,24 @@ class database:
     def __init__(self,angle,length,ODL,ODR,first_pic_or_second):
         if first_pic_or_second==1:
             #changer la date seulement
+            #si ça mache pas il faut créer la ligne avant
+            if angle>145:
+                front_base=length[0]
+                largeur=length[1]
+            else:
+                front_base=length[1]
+                largeur=length[0]
+            sql = """\
+            UPDATE 'datas' SET 'largeur'="""+str(largeur)+""", 'longueur'="""+str(longueur)+""", 'ODL'="""+str(ODL)+""", 'ODR'="""+str(ODR)+""" WHERE  enfant_id = '"""+str(enfant_id)+""""'
+            """
+            self.send_to_db(sql)
             self.update_db('positions','Date_mesure','CURRENT_TIMESTAMP') 
-            print("done")
-            sys.exit(1)
+
+
         else:
             db=self.select_db('*','positions')#timer [0  2 ?]
+            #db_2=self.select_db('*','datas')#timer [0  2 ?]
+            #if int(db_2['largeur'])>int(db_2['longueur'])
             timer=str(db['Date_mesure'])
             if angle>=0 and angle<45:
                 zone="secteur1"
@@ -41,11 +54,7 @@ class database:
             timer = datetime(int(timer[0]+timer[1]+timer[2]+timer[3]),int(timer[5]+timer[6]),int(timer[8]+timer[9]),int(timer[11]+timer[12]),int(timer[14]+timer[15]),int(timer[17]+timer[18]))
             timer=datetime.now()-timer
             timer=timer.seconds+db[zone]
-            #si ça mache pas il faut créer la ligne avant
-            sql = """\
-            UPDATE 'datas' SET 'largeur'="""+str(length[0])+""", 'longueur'="""+str(length[1])+""", 'ODL'="""+str(ODL)+""", 'ODR'="""+str(ODR)+""" WHERE  enfant_id = '"""+str(enfant_id)+""""'
-            """
-            self.send_to_db(sql)
+            
                 
         
         

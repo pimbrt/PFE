@@ -44,8 +44,12 @@ class find_ovale:
         
         print('*******OVALE...OK')
         
-        angle=(self.arrondi(box[2])+90)%180
-        print("*******ANGLE: "+str(int(angle)+90))
+        
+        angle=(self.arrondi(box[2])+90)
+        if angle>180:
+            angle=angle-180
+        
+        print("*******ANGLE: "+str(int(angle)))
 
         #Calcul des diagonales ODR ODL
         print(int(box[0][0]-sin(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][1]-cos(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][0]-sin(-3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][1]-cos(-3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2))
