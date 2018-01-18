@@ -24,7 +24,9 @@ class make_ellipse_full:
         self.put_color(ligne,colonne)
         cv2.imwrite('tmp.jpg',self.imgD)
         
+        
     def select_red(self,ligne,colonne):
+        #pas en cv2
         # transformation de l'image couleur en niveau de gris
         for i in range(ligne):
             for j in range(colonne):

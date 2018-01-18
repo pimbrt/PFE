@@ -7,20 +7,20 @@ import time
 import ovale
 
 
-
 class take_pictures:
-    def __init__(self):   
+    def __init__(self):
+        #camera = picamera.PiCamera()
         first_pic_or_second=1
-        self.img=self.take_one_pic()
-        #self.img=cv2.imread("image/testtete.jpg")
+        #self.img=self.take_one_pic(camera)
+        self.img=cv2.imread("image/testtete.jpg")
         print("IMAGE: IMPORTATION...OK")
         self.img=self.give_me_ellipse(self.img,first_pic_or_second)
         print("*******ELLIPSE SAVED...OK")
         
         first_pic_or_second=2
         while 1==1:
-            self.shoot()
-            print("IMAGE: IMPORTATION...OK")
+            self.shoot(camera)
+            print("IMAGE_2: IMPORTATION...OK")
             self.img=self.give_me_ellipse(self.img,first_pic_or_second)
             print("*******ELLIPSE SAVED...OK")
             
@@ -28,18 +28,19 @@ class take_pictures:
     def pre_traitement(self,image):
         kernel = np.ones((15,15),np.uint8)
         image_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY) # transformation en gris
-        image_canny = cv2.Canny(image_gray,150,150)#Je sais pas trop à quoi ça sert mais sans ça ne marche pas
+        image_canny = cv2.Canny(image_gray,80,80)#Je sais pas trop Ã  quoi Ã§a sert mais sans Ã§a ne marche pas
         image_final = cv2.morphologyEx(image_canny, cv2.MORPH_CLOSE, kernel)
         return image_final
         
         
-    def shoot(self):
-        time.sleep(10)
-        self.img=self.take_one_pic()
+    def shoot(self,camera):
+        #time.sleep(10)
+        self.img=self.take_one_pic(camera)
         
 
-    def take_one_pic(self):
-        #camera = picamera.PiCamera()	
+    def take_one_pic(self,camera):
+        
+        
         #camera.capture('tmp.jpg')
         camera = cv2.VideoCapture(0)
         image = camera.read()[1]
@@ -49,6 +50,8 @@ class take_pictures:
     def give_me_ellipse(self,image,first_pic_or_second):
         image=self.pre_traitement(image)
         print('*******PRE_TRAITEMENT...OK')
+        cv2.imshow("",image)
+        cv2.waitKey(0)
         image=cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
         
         ovale.find_ovale(image,first_pic_or_second)
@@ -92,7 +95,7 @@ camera.awb_mode = 'auto'
 camera.image_effect = 'none'
 camera.color_effects = None
 camera.rotation = 0
-camera.hflip = False
+
 camera.vflip = False
 camera.crop = (0.0, 0.0, 1.0, 1.0)
 """

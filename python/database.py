@@ -18,16 +18,9 @@ enfant_id = 1
 class database:
     def __init__(self,angle,length,ODL,ODR,first_pic_or_second):
         if first_pic_or_second==1:
-            #changer la date seulement
-            #si ça mache pas il faut créer la ligne avant
-            if angle>145:
-                front_base=length[0]
-                largeur=length[1]
-            else:
-                front_base=length[1]
-                largeur=length[0]
+
             sql = """\
-            UPDATE 'datas' SET 'largeur'="""+str(largeur)+""", 'longueur'="""+str(longueur)+""", 'ODL'="""+str(ODL)+""", 'ODR'="""+str(ODR)+""" WHERE  enfant_id = '"""+str(enfant_id)+""""'
+            UPDATE `datas` SET `largeur`="""+str(largeur)+""", `longeur`="""+str(longueur)+""", `ODL`="""+str(ODL)+""", `ODR`="""+str(ODR)+""" WHERE  enfant_id = '"""+str(enfant_id)+"""'
             """
             self.send_to_db(sql)
             self.update_db('positions','Date_mesure','CURRENT_TIMESTAMP') 
@@ -59,15 +52,15 @@ class database:
         
         
     def update_db(self,fraum,zone,timer):
-        #ajouter zone lÃ 
+        #ajouter zone lÃ 
         sql = """\
-        UPDATE '"""+str(fraum)+"""' SET '"""+str(zone)+"""'="""+str(timer)+""" WHERE  enfant_id = '"""+str(enfant_id)+""""'
+        UPDATE `"""+str(fraum)+"""` SET `"""+str(zone)+"""`="""+str(timer)+""" WHERE  enfant_id = '"""+str(enfant_id)+"""'
         """
         self.send_to_db(sql)
     def select_db(self,what,fraum):
         sql = """\
-        SELECT """+str(what)+""" FROM """+str(fraum)+"""
-        WHERE enfant_id = '"""+str(enfant_id)+""""'
+        SELECT `"""+str(what)+"""` FROM `"""+str(fraum)+"""`
+        WHERE enfant_id = '"""+str(enfant_id)+"""'
         """
         
         try:
