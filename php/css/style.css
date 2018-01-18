@@ -1,0 +1,92 @@
+@font-face {
+    font-family :'AmaticSC';
+    src:url('Amatic.otf') format('otf'),
+        url('AmaticSC-Bold.ttf') format('truetype');
+}
+
+.logo_nav-bare{
+height:10%;
+background-color: #2BFCC9;
+}
+
+.navbar{
+	background-color: #2BFCC9;
+
+
+
+}
+h1{
+	color: black;
+	font-weight: bold;
+	font-family: 'Open Sans Condensed', sans-serif;
+	font-family: 'Amatic SC';
+}
+h2{
+	color: black;
+	font-weight: bold;
+	font-family: 'Open Sans Condensed', sans-serif;
+	font-family: 'Amatic SC';
+}
+h3{
+	color: black;
+	font-weight: bold;
+	font-family: 'Open Sans Condensed', sans-serif;
+	font-family: 'Amatic SC';
+}
+h4{
+	color: black;
+	font-weight: bold;
+	font-family: 'Open Sans Condensed', sans-serif;
+	font-family: 'Amatic SC';
+}
+h5{
+	color: black;
+	font-weight: bold;
+	font-family: 'Open Sans Condensed', sans-serif;
+	font-family: 'Amatic SC';
+}
+.circle{
+    margin-top: 100px;
+    width:100px;
+    background:#FF0000;
+    height:100px;
+    text-align:center;
+    border-radius:100px;
+    <strong>line-height: 90px; /* 100 - 10 */</strong>
+
+}
+
+.photo_profil{
+	margin-top: 100px;
+
+
+}
+
+#calendar {
+		max-width: 800px;
+	}
+.col-centered{
+		float: none;
+		margin: 0 auto;
+	}
+	.general{
+
+	}
+
+	#popup {
+		display: hidden;
+	}
+
+#popup:hover {
+	display: block;
+}
+body {
+  	background-image: url("photos/papier_peint.jpg");
+}
+.nom{
+		text-align: center;
+
+}
+.infos{
+
+}
