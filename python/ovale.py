@@ -52,10 +52,10 @@ class find_ovale:
         
         print('*******OVALE...OK')
        
-        i,j,k,l,top=self.put_color(box,ligne,colonne)
+        #i,j,k,l,top=self.put_color(box,ligne,colonne)
         
-        angle=180*acos(self.Norme(k,l,i,l)/self.Norme(k,l,i,j))/pi
-
+        #angle=180*acos(self.Norme(k,l,i,l)/self.Norme(k,l,i,j))/pi
+        angle=box[2]
         if first_pic_or_second==1:
             first_angle=angle
             mon_fichier = open("fichier.txt", "w")
@@ -113,7 +113,7 @@ class find_ovale:
           # Number of points must be more than or equal to 6 for cv.FitEllipse2
           if len(c)>=6:
             box=cv2.fitEllipse(c)
-            if 100*box[1][0]/box[1][1]>80 and box[1][0]>50 and box[1][0]<300 and box[1][1]<300:
+            if 100*box[1][0]/box[1][1]>75 and box[1][0]>50 and box[1][0]<300 and box[1][1]<300:
                 if top_contours<=len(c):
                     top_contours=len(c)
                     top_c=c
@@ -174,5 +174,5 @@ class find_ovale:
                                         
         return top_i,top_j,top_k,top_l,top
 
-find_ovale(cv2.imread("image/fig1.jpg"),1)
+find_ovale(cv2.imread("image/testpoup.jpg"),1)
 
