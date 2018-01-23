@@ -7,7 +7,7 @@ Created on Thu Jan 18 14:08:11 2018
 """
 import motor.py as motor
 import time
-
+import ovale2 as ov
 moteur = motor.Moteur()
 
 def moveMotors(angle_needed,angle_have):
@@ -20,7 +20,7 @@ def moveMotors(angle_needed,angle_have):
 	        
 	        moteur.moteur1(1)
 	        
-	        angle_have = find_ovale()
+	        angle_have = ov.find_ovale_2()
 	    
 	    time_loop = time.clock-start
 	    moteur.stop_Moteur()
@@ -34,7 +34,7 @@ def moveMotors(angle_needed,angle_have):
 	        
 	        moteur.moteur2(1)
 	        
-	        angle_have = find_ovale()
+	        angle_have = find_ovale_2()
 	    
 	    time_loop = time.clock-start
 	    moteur.stop_Moteur()

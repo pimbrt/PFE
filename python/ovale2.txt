@@ -1,0 +1,2 @@
+def find_ovale_2()
+	return 0

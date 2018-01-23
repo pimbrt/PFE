@@ -7,7 +7,7 @@ from math import cos
 from math import pi
 from math import sqrt
 from math import acos
-#import database as db
+import database as db
 
 
 class find_ovale:
@@ -18,31 +18,31 @@ class find_ovale:
         self.processed = np.zeros((orig.shape[0],orig.shape[1],3),np.uint8)
         self.final = np.zeros((orig.shape[0],orig.shape[1],3),np.uint8)
         self.kernel = np.ones((2,2),np.uint8)
-        
+
         #passagede l'image en RGB et on blur orig
         orig=self.blur(orig,3)
         
         
         self.grey_scale=orig
     
-        self.processed=self.erode(2)
-        self.processed=self.dilate(2)
-        self.processed=cv2.Canny(self.processed,100,200)
+        self.processed=self.erode(30)
+        self.processed=self.dilate(3)
+        self.processed=cv2.Canny(self.processed,100,100)
         
         cnt=self.find_contour()
 
         ligne = self.final.shape[0]
         colonne = self.final.shape[1]
 
-              
+        self.final=orig
         box=self.draw_contours(cnt)
         
         cv2.ellipse(self.final,box,(0,0,255), 2)
         
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(-pi+180*box[2]/pi)*box[1][1]/2),self.arrondi(box[0][1]-cos(-pi+180*box[2]/pi)*box[1][1]/2)),(255,0,0),2)
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(180*box[2]/pi)*box[1][1]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi)*box[1][1]/2)),(255,0,0),2)
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(180*box[2]/pi-pi/2)*box[1][0]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi-pi/2)*box[1][0]/2)),(255,0,0),2)
-        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(180*box[2]/pi+pi/2)*box[1][0]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi+pi/2)*box[1][0]/2)),(255,0,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(-pi+180*box[2]/pi)*box[1][0]/2),self.arrondi(box[0][1]-cos(-pi+180*box[2]/pi)*box[1][0]/2)),(255,0,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(180*box[2]/pi)*box[1][0]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi)*box[1][0]/2)),(255,0,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(180*box[2]/pi-pi/2)*box[1][1]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi-pi/2)*box[1][1]/2)),(255,0,0),2)
+        cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(180*box[2]/pi+pi/2)*box[1][1]/2),self.arrondi(box[0][1]-cos(180*box[2]/pi+pi/2)*box[1][1]/2)),(255,0,0),2)
         
         
         cv2.line(self.final,(self.arrondi(box[0][0]),self.arrondi(box[0][1])),(self.arrondi(box[0][0]+sin(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),self.arrondi(box[0][1]-cos(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2)),(0,255,0),2)
@@ -76,16 +76,12 @@ class find_ovale:
         ODL = self.Norme(int(box[0][0]-sin(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][1]-cos(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][0]-sin(-3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][1]-cos(-3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2))
         ODR = self.Norme(int(box[0][0]-sin(3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][1]-cos(3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][0]-sin(-pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),int(box[0][1]-cos(-pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2))
         print('*******DIAGONAL_FRONTO_OCCIPITAL...OK')
-        #on envoie le rÃ©sultat Ã  la base de donnÃ©es
+        #on envoie le résultat à la base de données
 
-        #db.database(angle,box[1],ODL,ODR,first_pic_or_second)
+        db.database(angle,box[1],ODL,ODR,first_pic_or_second)
 
-
-        # show images
-        cv2.imwrite('tmp.jpg',self.final)
-        cv2.imshow("",self.final)
-        cv2.waitKey(0)
-            
+        #cv2.imshow("",self.final)
+        #cv2.waitKey(0)
         
     def blur(self,orig,mask):
         return cv2.GaussianBlur(orig,(mask,mask),0)
@@ -113,10 +109,10 @@ class find_ovale:
           # Number of points must be more than or equal to 6 for cv.FitEllipse2
           if len(c)>=6:
             box=cv2.fitEllipse(c)
-            if 100*box[1][0]/box[1][1]>75 and box[1][0]>50 and box[1][0]<300 and box[1][1]<300:
-                if top_contours<=len(c):
-                    top_contours=len(c)
-                    top_c=c
+            #if 100*box[1][0]/box[1][1]>75 and box[1][0]>50 and box[1][0]<300 and box[1][1]<300:
+            if top_contours<=len(c):
+                top_contours=len(c)
+                top_c=c
       
         return cv2.fitEllipse(top_c)
     
@@ -130,49 +126,5 @@ class find_ovale:
             return int(nb[0])+1
         else:
             return int(nb[0])
-        
-    def put_color(self,box,ligne,colonne):
-        top_i=0
-        top_j=0
-        top_k=0
-        top_l=0
-        top=self.arrondi(box[1][1])
-
-        seuilx1=0
-        seuily1=0
-        seuilx2=0
-        seuily2=0
-        for i in range(ligne):
-
-            for j in range(colonne):
-                if self.final[i,j][2]==255:
-                    if seuilx1<j and seuilx1==0:
-                        seuilx1=j
-                    if seuily1<i and seuily1==0:
-                        seuily1=i
-                    if seuilx2<j :
-                        seuilx2=j
-                    if seuily2<i:
-                        seuily2=i
-                    
-        print('*******SEUIL...OK')
-        for i in range(seuily1,int(seuily1+(seuily2-seuily1)/2)):
-            for j in range(seuilx1,seuilx2):
-                if self.final[i,j][2]==255: #(rouge normalement)
-                    for k in range(int(seuily1+(seuily2-seuily1)/2),seuily2):
-                        for l in range(seuilx1,seuilx2):
-                            if self.final[k,l][2]==255: 
-                                if self.Norme(i,j,k,l)<top+10 and self.Norme(i,j,k,l)>top-10:
-                                        top_i=i
-                                        top_j=j
-                                        top_k=k
-                                        top_l=l
-                                        seuily2=0
-                                        seuilx2=0
-                                        break
-                                        
-                                        
-        return top_i,top_j,top_k,top_l,top
-
-find_ovale(cv2.imread("image/testpoup.jpg"),1)
+   
 

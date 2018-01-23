@@ -1,57 +1,50 @@
 #!/usr/bin/python3.6
 # -*-coding:Latin-1 -*
 import cv2
-#import picamera
+
 import numpy as np
 import time
 import ovale
+import pic
 
 
 class take_pictures:
     def __init__(self):
-        #camera = picamera.PiCamera()
         first_pic_or_second=1
-        #self.img=self.take_one_pic(camera)
-        self.img=cv2.imread("image/testtete.jpg")
+        self.img=pic.take_one_pic()
+        #self.img=cv2.imread("image/testtete.jpg")
+        cv2.imshow("",self.img)
+        cv2.waitKey(0)
         print("IMAGE: IMPORTATION...OK")
         self.img=self.give_me_ellipse(self.img,first_pic_or_second)
         print("*******ELLIPSE SAVED...OK")
-        
+
         first_pic_or_second=2
         while 1==1:
-            self.shoot(camera)
+            self.shoot()
             print("IMAGE_2: IMPORTATION...OK")
             self.img=self.give_me_ellipse(self.img,first_pic_or_second)
             print("*******ELLIPSE SAVED...OK")
             
             
     def pre_traitement(self,image):
-        kernel = np.ones((15,15),np.uint8)
+        kernel = np.ones((50,50),np.uint8)
         image_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY) # transformation en gris
-        image_canny = cv2.Canny(image_gray,80,80)#Je sais pas trop Ã  quoi Ã§a sert mais sans Ã§a ne marche pas
+        image_canny = cv2.Canny(image_gray,70,70)#Je sais pas trop à quoi ça sert mais sans ça ne marche pas
         image_final = cv2.morphologyEx(image_canny, cv2.MORPH_CLOSE, kernel)
         return image_final
         
         
-    def shoot(self,camera):
+    def shoot(self):
         #time.sleep(10)
-        self.img=self.take_one_pic(camera)
+        self.img=pic.take_one_pic()
         
 
-    def take_one_pic(self,camera):
-        
-        
-        #camera.capture('tmp.jpg')
-        camera = cv2.VideoCapture(0)
-        image = camera.read()[1]
-        cv2.imwrite('tmp.jpg',image)
-        return cv2.imread('tmp.jpg')
 
     def give_me_ellipse(self,image,first_pic_or_second):
         image=self.pre_traitement(image)
         print('*******PRE_TRAITEMENT...OK')
-        cv2.imshow("",image)
-        cv2.waitKey(0)
+    
         image=cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
         
         ovale.find_ovale(image,first_pic_or_second)
