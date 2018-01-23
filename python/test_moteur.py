@@ -21,34 +21,34 @@ def moveMotors(angle_needed,angle_have):
     angle = angle_needed-angle_have
     if angle > 0:
         start = time.time()
-        	while angle_have < angle_needed:
-            #moteur.reverse_Moteur1(1)
-        	   moteur.moteur1(1)
-        	        
-        	   ov.find_ovale_2()
-        	   mon_fichier = open("angle_moteur.txt", "r")
+        while angle_have < angle_needed:
+        #moteur.reverse_Moteur1(1)
+           moteur.moteur1(1)
+                
+           ov.find_ovale_2()
+           mon_fichier = open("angle_moteur.txt", "r")
+           angle_have=arrondi(mon_fichier.read())
+           mon_fichier.close
+            
+        time_loop = time.time() - start
+        moteur.stop_Moteur()
+        moteur.reverse_Moteur1(1)
+        time.sleep(time_loop)
+        moteur.stop_Moteur()
+    elif angle < 0:
+        start = time.time()
+        while angle_needed < angle_have:
+            moteur.moteur2(1)
+            #moteur.reverse_Moteur2(1)
+            ov.find_ovale_2()
+            mon_fichier = open("angle_moteur.txt", "r")
             angle_have=arrondi(mon_fichier.read())
             mon_fichier.close
-        	    
-        	time_loop = time.time() - start
-        	moteur.stop_Moteur()
-        	moteur.reverse_Moteur1(1)
-        	time.sleep(time_loop)
-        	moteur.stop_Moteur()
-    elif angle < 0:
-         start = time.time()
-        	while angle_needed < angle_have:
-                moteur.moteur2(1)
-                #moteur.reverse_Moteur2(1)
-        	     ov.find_ovale_2()
-        	     mon_fichier = open("angle_moteur.txt", "r")
-        	     angle_have=arrondi(mon_fichier.read())
-        	     mon_fichier.close
-        	time_loop = time.time()-start
-        	moteur.stop_Moteur()
-        	moteur.reverse_Moteur2(1)
-        	time.sleep(time_loop)
-        	moteur.stop_Moteur()
+        time_loop = time.time()-start
+        moteur.stop_Moteur()
+        moteur.reverse_Moteur2(1)
+        time.sleep(time_loop)
+        moteur.stop_Moteur()
     else:
         moteur.stop_Moteur()
 
