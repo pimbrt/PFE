@@ -6,43 +6,50 @@ import numpy as np
 import time
 import ovale
 import pic
-
+import trait_image
 
 class take_pictures:
     def __init__(self):
+        ##
+        #Initialisation de first_pic_or_second dans le but de enregistrer 
+        #l'angle "naturel" de la tête du bébé
+        ##
         first_pic_or_second=1
+        ##
+        #Dans le fichier pic est contenue une fonction permettant de prendre 
+        #une photo à l'aide de la raspberry
+        ##
         self.img=pic.take_one_pic()
-        #self.img=cv2.imread("image/testtete.jpg")
-        cv2.imshow("",self.img)
-        cv2.waitKey(0)
         print("IMAGE: IMPORTATION...OK")
+        
+        ##
+        #give_me_ellipse est une fonction appartenant à cette classe, 
+        #après traitement elle va envoyer l'image analysée à ovale.py qui 
+        #va chercher l'ovale sur la photo
+        ##
         self.img=self.give_me_ellipse(self.img,first_pic_or_second)
         print("*******ELLIPSE SAVED...OK")
-
+        
+        ##
+        #first_pic_or_second pase à 2 indiquant aux autres fonctions qu'on 
+        #cherche à trouver la variation d'angle entre la première et la 
+        #dernière photo
+        ##
         first_pic_or_second=2
+        
+        ##
+        #La boucle permet de proposer de nouvelles photos à la fonction 
+        #cherchant un ovale
+        ##
         while 1==1:
-            self.shoot()
+            self.img=pic.take_one_pic()
             print("IMAGE_2: IMPORTATION...OK")
             self.img=self.give_me_ellipse(self.img,first_pic_or_second)
             print("*******ELLIPSE SAVED...OK")
             
-            
-    def pre_traitement(self,image):
-        kernel = np.ones((50,50),np.uint8)
-        image_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY) # transformation en gris
-        image_canny = cv2.Canny(image_gray,70,70)#Je sais pas trop à quoi ça sert mais sans ça ne marche pas
-        image_final = cv2.morphologyEx(image_canny, cv2.MORPH_CLOSE, kernel)
-        return image_final
-        
-        
-    def shoot(self):
-        #time.sleep(10)
-        self.img=pic.take_one_pic()
-        
-
 
     def give_me_ellipse(self,image,first_pic_or_second):
-        image=self.pre_traitement(image)
+        image=trait_image.pre_traitement(image)
         print('*******PRE_TRAITEMENT...OK')
     
         image=cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
@@ -59,6 +66,9 @@ class take_pictures:
 
 
 take_pictures()
+
+
+
 """
 you can apply a horizontal and vertical flip
 camera.hflip = True
