@@ -1,9 +1,6 @@
 #!/usr/bin/python3.6
-# -*-coding:Latin-1 -*
+# -*- coding: utf-8 -*-
 import cv2
-
-import numpy as np
-import time
 import ovale
 import pic
 import trait_image

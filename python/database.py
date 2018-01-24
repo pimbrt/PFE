@@ -1,10 +1,11 @@
 #!/usr/bin/python3.6
-# -*-coding:Latin-1 -*
+# -*- coding: utf-8 -*-
 
 import MySQLdb
 from datetime import datetime
 from math import frexp
-import test_moteur as tm
+import main_moteur as mm
+import trait_image
 #si marche pas changer ' par `
 # On crÃ©Ã© un dictionnaire contenant les paramÃ¨tres de connexion MySQL
 paramMysql = {
@@ -29,11 +30,15 @@ class database:
         if first_pic_or_second==1:
             longueur=length[0]
             largeur=length[1]
+            
             sql = """\
-            UPDATE `datas` SET `largeur`="""+str(largeur)+""", `longueur`="""+str(longueur)+""", `ODL`="""+str(ODL)+""", `ODR`="""+str(ODR)+""" WHERE  enfant_id = '"""+str(enfant_id)+"""'"""
+            UPDATE `datas` SET `largeur`="""+str(largeur)+""", `longueur`="""+str(longueur)+""", 
+            `ODL`="""+str(ODL)+""", `ODR`="""+str(ODR)+""" WHERE  enfant_id = '"""+str(enfant_id)+"""'"""
             print("SQL : "+str(sql))
             self.send_to_db(sql)
+            
             self.update_db('positions','Date_mesure','CURRENT_TIMESTAMP')
+           
             mon_fichier = open("previous_angle.txt", "w")
             mon_fichier.write(str(angle))
             mon_fichier.close()
@@ -54,7 +59,7 @@ class database:
             else:
        
                 mon_fichier = open("previous_angle.txt", "r")
-                previous_angle=self.arrondi(mon_fichier.read())
+                previous_angle=trait_image.arrondi(mon_fichier.read())
                 mon_fichier.close
                 if abs(angle-previous_angle)<50:
                     mon_fichier = open("previous_angle.txt", "w")
@@ -63,7 +68,6 @@ class database:
 
 
                     print("*******ANGLE: "+str(int(angle)))
-                    timer=str(db['Date_mesure'])
                     if angle>=-90 and angle<-45:
                         zone="secteur1"
                         zone_num="-67"
@@ -85,15 +89,16 @@ class database:
                         
                     ##
                     #On regarde depuis combien de temps le bébé est dans cette 
-                    #position puis on met à jour la bdd, puis on anaslyse la 
+                    #position, on met à jour la bdd, puis on anaslyse la 
                     #bdd afin de savoir si il faut bouger le bébé
                     ##
+                    timer=str(db['Date_mesure'])
                     timer = datetime(int(timer[0]+timer[1]+timer[2]+timer[3]),int(timer[5]+timer[6]),int(timer[8]+timer[9]),int(timer[11]+timer[12]),int(timer[14]+timer[15]),int(timer[17]+timer[18]))
                     timer=datetime.now()-timer
                     timer=timer.seconds+db[zone]
                     self.update_db('positions',zone,timer)
                     print("YES ANALYSE ...")
-                    self.analyse(angle,zone_num)
+                    self.analyse(angle,zone_num,db)
                 else:
                     print("ERROR: TOO FAST")
                     
@@ -103,9 +108,11 @@ class database:
     def update_db(self,fraum,zone,timer):
         #ajouter zone lÃ 
         sql = """\
-        UPDATE """+str(fraum)+""" SET """+str(zone)+"""="""+str(timer)+""" WHERE  enfant_id = '"""+str(enfant_id)+"""'
+        UPDATE """+str(fraum)+""" SET """+str(zone)+"""="""+str(timer)+""" 
+        WHERE  enfant_id = '"""+str(enfant_id)+"""'
         """
         self.send_to_db(sql)
+        
     def select_db(self,what,fraum):
         sql = """\
         SELECT """+str(what)+""" FROM """+str(fraum)+"""
@@ -113,22 +120,14 @@ class database:
         """
         
         try:
-            # On  crÃ©Ã© une conexion MySQL
+            # On  créé une conexion MySQL
             conn = MySQLdb.connect(**paramMysql)
-            # On crÃ©Ã© un curseur MySQL
+            # On créé un curseur MySQL
             cur = conn.cursor(MySQLdb.cursors.DictCursor)
-            # On exÃ©cute la requÃªte SQL
+            # On exécute la requÃªte SQL
             cur.execute(sql)
-            # On rÃ©cupÃ¨re toutes les lignes du rÃ©sultat de la requÃªte
+            # On récupère toutes les lignes du résultat de la requête
             rows = cur.fetchall()
-            # On parcourt toutes les lignes
-            #for row in rows:
-                # Pour rÃ©cupÃ©rer les diffÃ©rentes valeurs des diffÃ©rents champs
-                #valeur1 = row['monchamp1']
-                #valeur2 = row['monchamp2']
-                #valeur3 = row['monchamp3']
-                # etc etc ...
-            
             return rows
         except MySQLdb.Error, e:
             # En cas d'anomalie
@@ -139,12 +138,12 @@ class database:
     def send_to_db(self,sql):
 
         try:
-            # On  crÃ©Ã© une conexion MySQL
+            # On  créé une conexion MySQL
             conn = MySQLdb.connect(**paramMysql)
-            # On crÃ©Ã© un curseur MySQL
+            # On créé un curseur MySQL
             cur = conn.cursor()
             try:
-                # On exÃ©cute la requÃªte SQL
+                # On exécute la requête SQL
                 cur.execute(sql)
                 # On commit
                 conn.commit()
@@ -155,20 +154,17 @@ class database:
         except MySQLdb.Error, e:
             # En cas d'anomalie
             print "Error %d: %s" % (e.args[0],e.args[1])
-    def arrondi(self,nb):
-        nb=str(nb).split('.')
-        if int(nb[1])>=5:
-            return int(nb[0])+1
-        else:
-            return int(nb[0])
+            
+            
 
 
-    def analyse(self,angle,zone_num):
-        #On  cherche les habitudes du bébé
-        db=self.select_db("*","positions")[0]
+
+    def analyse(self,angle,zone_num,db):       
         
         #On les enregistre dans ce dico
-        secteur={"-67":int(db['secteur1']),"-22":int(db['secteur2']),"0":int(db['secteur3']),"22":int(db['secteur4']),'67':int(db['secteur5'])}
+        secteur={"-67":int(db['secteur1']),"-22":int(db['secteur2']),
+                 "0":int(db['secteur3']),"22":int(db['secteur4']),
+                 '67':int(db['secteur5'])}
 
         # dans array on calcule le temps passé à gauche et à droite
         array={"left":secteur["-67"]+secteur["-22"],
@@ -203,7 +199,7 @@ class database:
         else:
             key="0"
             
-        ecart=5
+        
 
         # si l'écart en secondes entre la zone la moins sollicitée et la plus 
         #est supérieur à la variable écart et que l'enfant n'est pas dans la 
@@ -211,9 +207,10 @@ class database:
         #correspondant à la tranche la moins sollicitée de la zone la moins 
         #sollicitée les moteurs vont donc alors (en vérifiant l'angle obtenu au
         #fur et à mesure) déplacer l'enfant jusqu'à obtenir un angle convaincant
+        ecart=5
         if array[maxi_key]-array[mini_key]>ecart and key!= zone_num :  
             print("ACTION VALIDATED")
-            tm.moveMotors(int(key),angle)
+            mm.moveMotors(int(key),angle)
             
             
             
