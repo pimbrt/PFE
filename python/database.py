@@ -33,7 +33,7 @@ class database:
             
             sql = """\
             UPDATE `datas` SET `largeur`="""+str(largeur)+""", `longueur`="""+str(longueur)+""", 
-            `ODL`="""+str(ODL)+""", `ODR`="""+str(ODR)+""" WHERE  enfant_id = '"""+str(enfant_id)+"""'"""
+            `ODL`="""+str(ODL)+""", `ODR`="""+str(ODR)+""" WHERE  enfant_id = """+str(enfant_id)
             print("SQL : "+str(sql))
             self.send_to_db(sql)
             
@@ -53,7 +53,12 @@ class database:
         #en seconde)
         ##
         else:
-            db=self.select_db('*','positions')[0]#timer [0  2 ?]
+            
+            sql = """\
+            SELECT * FROM positions
+            WHERE enfant_id = """+str(enfant_id)
+            db=self.select_db(sql)[0]
+            
             if angle <-90 or angle >90:
                 print("ERROR: TOO FANTASTIC ANGLE")
             else:
@@ -109,15 +114,10 @@ class database:
         #ajouter zone lÃ 
         sql = """\
         UPDATE """+str(fraum)+""" SET """+str(zone)+"""="""+str(timer)+""" 
-        WHERE  enfant_id = '"""+str(enfant_id)+"""'
-        """
+        WHERE  enfant_id = """+str(enfant_id)
         self.send_to_db(sql)
         
-    def select_db(self,what,fraum):
-        sql = """\
-        SELECT """+str(what)+""" FROM """+str(fraum)+"""
-        WHERE enfant_id = '"""+str(enfant_id)+"""'
-        """
+    def select_db(self,sql):
         
         try:
             # On  créé une conexion MySQL
@@ -210,11 +210,31 @@ class database:
         ecart=5
         if array[maxi_key]-array[mini_key]>ecart and key!= zone_num :  
             print("ACTION VALIDATED")
+            self.save_action()
             mm.moveMotors(int(key),angle)
             
             
-            
-            
+    def save_action(self):
+        sql = """\
+        SELECT * FROM actions
+        WHERE date = 'CURRENT_DATE'
+        """
+        
+        self.select_db(sql)
+        
+        if 'enfant_id' in rows:
+            nb_action=rows['nb_action']+1
+            sql = """\
+            UPDATE actions SET nb_action="""+nb_action+""" WHERE  date = 'CURRENT_DATE'"""
+            print("SQL : "+str(sql))
+            self.send_to_db(sql)
+        else :
+            sql = """\
+            INSERT INTO actions
+            (enfant_id,nb_action,date)
+            VALUES (1,1,'CURRENT_DATE')
+            """
+            self.send_to_db(sql)
 #finally:
 # On ferme la connexion
 #if conn:
