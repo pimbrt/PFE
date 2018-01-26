@@ -18,7 +18,8 @@ def moveMotors(angle_needed,angle_have):
         start = time.time()
         #tant que l'écart n'est pas corrigé
         while angle_have < angle_needed:
-           moteur.moteur1(1)   
+           moteur.moteur1(1)
+           #moteur.reverse_Moteur1(1)
            #on situe la tête du bébé
            ov.find_ovale_2()
            mon_fichier = open("angle_moteur.txt", "r")
@@ -32,6 +33,7 @@ def moveMotors(angle_needed,angle_have):
         while time.time()-start<time_loop:
             ov.find_ovale_2()
             moteur.reverse_Moteur1(1)
+            #moteur.moteur1(1)
         moteur.stop_Moteur()
     elif angle < 0:
         start = time.time()
@@ -48,6 +50,7 @@ def moveMotors(angle_needed,angle_have):
         while time.time()-start<time_loop:
             ov.find_ovale_2()
             moteur.reverse_Moteur1(1)
+            #moteur.moteur2(1)
         moteur.stop_Moteur()
     else:
         moteur.stop_Moteur()

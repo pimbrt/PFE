@@ -33,7 +33,7 @@ class database:
             
             sql = """\
             UPDATE `datas` SET `largeur`="""+str(largeur)+""", `longueur`="""+str(longueur)+""", 
-            `ODL`="""+str(ODL)+""", `ODR`="""+str(ODR)+""" WHERE  enfant_id = """+str(enfant_id)
+            `ODL`="""+str(ODL)+""", `ODR`="""+str(ODR)+""", `date_data`=CURRENT_TIMESTAMP WHERE  enfant_id = """+str(enfant_id)
             print("SQL : "+str(sql))
             self.send_to_db(sql)
             
@@ -100,8 +100,9 @@ class database:
                     timer=str(db['Date_mesure'])
                     timer = datetime(int(timer[0]+timer[1]+timer[2]+timer[3]),int(timer[5]+timer[6]),int(timer[8]+timer[9]),int(timer[11]+timer[12]),int(timer[14]+timer[15]),int(timer[17]+timer[18]))
                     timer=datetime.now()-timer
-                    timer=timer.seconds+db[zone]
+                    timer=float(str(timer)[5:])+db[zone]
                     self.update_db('positions',zone,timer)
+                    self.update_db('positions','Date_mesure','CURRENT_TIMESTAMP')
                     print("YES ANALYSE ...")
                     self.analyse(angle,zone_num,db)
                 else:
@@ -215,24 +216,25 @@ class database:
             
             
     def save_action(self):
+        today=str(datetime.now())[0:10]
         sql = """\
         SELECT * FROM actions
-        WHERE date = 'CURRENT_DATE'
+        WHERE date = '"""+today+"""'
         """
+        print(sql)
         
-        self.select_db(sql)
+        rows=self.select_db(sql)[0]
         
         if 'enfant_id' in rows:
             nb_action=rows['nb_action']+1
             sql = """\
-            UPDATE actions SET nb_action="""+nb_action+""" WHERE  date = 'CURRENT_DATE'"""
-            print("SQL : "+str(sql))
+            UPDATE actions SET nb_action="""+str(nb_action)+""" WHERE  date = '"""+today+"""'"""
             self.send_to_db(sql)
         else :
             sql = """\
             INSERT INTO actions
-            (enfant_id,nb_action,date)
-            VALUES (1,1,'CURRENT_DATE')
+            (`enfant_id`,`nb_action`,`date`)
+            VALUES (1,1,CURRENT_TIMESTAMP)
             """
             self.send_to_db(sql)
 #finally:

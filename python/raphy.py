@@ -1,41 +1,44 @@
 #!/usr/bin/python3.6
-# -*- coding: utf-8 -*-
+# -*- coding: latin 1 -*-
 import cv2
 import ovale
 import pic
 import trait_image
+import time
+
 
 class take_pictures:
     def __init__(self):
         ##
         #Initialisation de first_pic_or_second dans le but de enregistrer 
-        #l'angle "naturel" de la tÃªte du bÃ©bÃ©
+        #l'angle "naturel" de la tête du bébé
         ##
         first_pic_or_second=1
         ##
         #Dans le fichier pic est contenue une fonction permettant de prendre 
-        #une photo Ã  l'aide de la raspberry
+        #une photo à l'aide de la raspberry
         ##
+        time.sleep(2)
         self.img=pic.take_one_pic()
         print("IMAGE: IMPORTATION...OK")
-        
+
         ##
-        #give_me_ellipse est une fonction appartenant Ã  cette classe, 
-        #aprÃ¨s traitement elle va envoyer l'image analysÃ©e Ã  ovale.py qui 
+        #give_me_ellipse est une fonction appartenant à cette classe, 
+        #après traitement elle va envoyer l'image analysée à ovale.py qui 
         #va chercher l'ovale sur la photo
         ##
         self.img=self.give_me_ellipse(self.img,first_pic_or_second)
         print("*******ELLIPSE SAVED...OK")
         
         ##
-        #first_pic_or_second pase Ã  2 indiquant aux autres fonctions qu'on 
-        #cherche Ã  trouver la variation d'angle entre la premiÃ¨re et la 
-        #derniÃ¨re photo
+        #first_pic_or_second pase à 2 indiquant aux autres fonctions qu'on 
+        #cherche à trouver la variation d'angle entre la première et la 
+        #dernière photo
         ##
         first_pic_or_second=2
         
         ##
-        #La boucle permet de proposer de nouvelles photos Ã  la fonction 
+        #La boucle permet de proposer de nouvelles photos à la fonction 
         #cherchant un ovale
         ##
         while 1==1:

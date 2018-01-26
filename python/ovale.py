@@ -1,5 +1,5 @@
 #!/usr/bin/python3.6
-# -*- coding: utf-8 -*-
+# -*- coding: latin 1 -*-
 import cv2
 import numpy as np
 from math import sin
@@ -39,7 +39,7 @@ class find_ovale:
         #afin d'avoir une superposition de l'image reçue ainsi que de l'ellipse
         ##
         self.final=orig
-        
+
         ##
         #draw_contours donne des informations sur l'ellipse trouvée dans l'image
         ##
@@ -81,7 +81,7 @@ class find_ovale:
         ##
         db.database(angle,box[1],ODL,ODR,first_pic_or_second)
 
-
+ 
 
     def print_diag(self,box):
         cv2.line(self.final,(trait_image.arrondi(box[0][0]),trait_image.arrondi(box[0][1])),
@@ -131,7 +131,7 @@ class find_ovale:
         print(angle)
         return angle-first_angle
     
-    def calc_angle(self,box):
+    def calc_diag(self,box):
         ODL = trait_image.Norme(int(box[0][0]-sin(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),
                          int(box[0][1]-cos(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),
                          int(box[0][0]-sin(-3*pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),

@@ -3,6 +3,7 @@
 import cv2
 import numpy as np
 import pic
+import MySQLdb
 import trait_image
 from datetime import datetime
 #si marche pas changer ' par `
@@ -92,8 +93,10 @@ class find_ovale_2:
                 timer=str(db['Date_mesure'])
                 timer = datetime(int(timer[0]+timer[1]+timer[2]+timer[3]),int(timer[5]+timer[6]),int(timer[8]+timer[9]),int(timer[11]+timer[12]),int(timer[14]+timer[15]),int(timer[17]+timer[18]))
                 timer=datetime.now()-timer
-                timer=timer.seconds+db[zone]
+                timer=float(str(timer)[5:])+db[zone]
                 self.update_db('positions',zone,timer)
+                self.update_db('positions','Date_mesure','CURRENT_TIMESTAMP')
+
 
                 
             else:
