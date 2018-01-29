@@ -49,7 +49,7 @@ def moveMotors(angle_needed,angle_have):
         start=time.time()
         while time.time()-start<time_loop:
             ov.find_ovale_2()
-            moteur.reverse_Moteur1(1)
+            moteur.reverse_Moteur2(1)
             #moteur.moteur2(1)
         moteur.stop_Moteur()
     else:
