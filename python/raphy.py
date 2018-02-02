@@ -4,6 +4,7 @@ import cv2
 import ovale
 import pic
 import trait_image
+import RPi.GPIO as GPIO
 import time
 
 
@@ -18,7 +19,6 @@ class take_pictures:
         #Dans le fichier pic est contenue une fonction permettant de prendre 
         #une photo à l'aide de la raspberry
         ##
-        time.sleep(2)
         self.img=pic.take_one_pic()
         print("IMAGE: IMPORTATION...OK")
 
@@ -46,6 +46,8 @@ class take_pictures:
             print("IMAGE_2: IMPORTATION...OK")
             self.img=self.give_me_ellipse(self.img,first_pic_or_second)
             print("*******ELLIPSE SAVED...OK")
+            if GPIO.input(13)==1:
+               break
             
 
     def give_me_ellipse(self,image,first_pic_or_second):
@@ -60,12 +62,9 @@ class take_pictures:
         
         return image
    
-    
-    
-    
 
 
-take_pictures()
+
 
 
 

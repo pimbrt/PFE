@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
-source ~/.profile
+export WORKON_HOME=~/.virtualenvs
 source /usr/local/bin/virtualenvwrapper.sh
-export WORKON_HOME=$HOME/.virtualenvs
 workon cv
+
+python /home/pi/pfe/bouton.py

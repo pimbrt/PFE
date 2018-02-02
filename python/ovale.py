@@ -81,8 +81,6 @@ class find_ovale:
         ##
         db.database(angle,box[1],ODL,ODR,first_pic_or_second)
 
- 
-
     def print_diag(self,box):
         cv2.line(self.final,(trait_image.arrondi(box[0][0]),trait_image.arrondi(box[0][1])),
                  (trait_image.arrondi(box[0][0]+sin(-pi+180*box[2]/pi)*box[1][0]/2),
@@ -128,8 +126,12 @@ class find_ovale:
             mon_fichier = open("fichier.txt", "r")
             first_angle=trait_image.arrondi(mon_fichier.read())
             mon_fichier.close
-        print(angle)
-        return angle-first_angle
+        angle=angle-first_angle
+        if angle<-90:
+            angle=angle+180
+        if angle>90:
+            angle=angle-180
+        return angle
     
     def calc_diag(self,box):
         ODL = trait_image.Norme(int(box[0][0]-sin(pi/4+180*box[2]/pi)*(box[1][1]/2+box[1][0]/2)/2),

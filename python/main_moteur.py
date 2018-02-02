@@ -9,6 +9,8 @@ import motor as motor
 import time
 import ovale2 as ov
 import trait_image
+import RPi.GPIO as GPIO
+import conn_db as cdb
 moteur = motor.Moteur()
 
 
@@ -25,12 +27,19 @@ def moveMotors(angle_needed,angle_have):
            mon_fichier = open("angle_moteur.txt", "r")
            angle_have=trait_image.arrondi(mon_fichier.read())
            mon_fichier.close
+           if time.time()-start>=60:
+               sql = """\
+               UPDATE `datas` SET 'alert'=1  enfant_id = """+str(enfant_id)
+               cdb.send_to_db(sql)
+               break
+           if GPIO.input(13)==1:
+               break
             
         time_loop = time.time() - start
         moteur.stop_Moteur()
         # on retourne en arrière
         start=time.time()
-        while time.time()-start<time_loop:
+        while time.time()-start<time_loop+2 :
             ov.find_ovale_2()
             moteur.reverse_Moteur1(1)
             #moteur.moteur1(1)
@@ -44,10 +53,17 @@ def moveMotors(angle_needed,angle_have):
             mon_fichier = open("angle_moteur.txt", "r")
             angle_have=trait_image.arrondi(mon_fichier.read())
             mon_fichier.close
+            if time.time()-start>=60:
+               sql = """\
+               UPDATE `datas` SET 'alert'=1  enfant_id = """+str(enfant_id)
+               cdb.send_to_db(sql)
+               break
+            if GPIO.input(13)==1:
+               break
         time_loop = time.time()-start
         moteur.stop_Moteur()
         start=time.time()
-        while time.time()-start<time_loop:
+        while time.time()-start<time_loop+2:
             ov.find_ovale_2()
             moteur.reverse_Moteur2(1)
             #moteur.moteur2(1)

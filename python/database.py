@@ -6,17 +6,7 @@ from datetime import datetime
 from math import frexp
 import main_moteur as mm
 import trait_image
-#si marche pas changer ' par `
-# On crÃ©Ã© un dictionnaire contenant les paramÃ¨tres de connexion MySQL
-paramMysql = {
-    'host'   : 'localhost',
-    'user'   : 'root',
-    'passwd' : 'root',
-    'db'     : 'raphy_pfe'
-}
-
-#un enfant = une raspberry donc dans la base de données l'enfant sera le numéro 1
-enfant_id = 1 
+import conn_db as cdb
 
 
 class database:
@@ -33,11 +23,11 @@ class database:
             
             sql = """\
             UPDATE `datas` SET `largeur`="""+str(largeur)+""", `longueur`="""+str(longueur)+""", 
-            `ODL`="""+str(ODL)+""", `ODR`="""+str(ODR)+""", `date_data`=CURRENT_TIMESTAMP WHERE  enfant_id = """+str(enfant_id)
+            `ODL`="""+str(ODL)+""", `ODR`="""+str(ODR)+""", `date_data`=CURRENT_TIMESTAMP WHERE  enfant_id = """+str(cdb.enfant_id)
             print("SQL : "+str(sql))
-            self.send_to_db(sql)
+            cdb.send_to_db(sql)
             
-            self.update_db('positions','Date_mesure','CURRENT_TIMESTAMP')
+            cdb.update_db('positions','Date_mesure','CURRENT_TIMESTAMP')
            
             mon_fichier = open("previous_angle.txt", "w")
             mon_fichier.write(str(angle))
@@ -56,8 +46,8 @@ class database:
             
             sql = """\
             SELECT * FROM positions
-            WHERE enfant_id = """+str(enfant_id)
-            db=self.select_db(sql)[0]
+            WHERE enfant_id = """+str(cdb.enfant_id)
+            db=cdb.select_db(sql)[0]
             
             if angle <-90 or angle >90:
                 print("ERROR: TOO FANTASTIC ANGLE")
@@ -75,7 +65,7 @@ class database:
                     print("*******ANGLE: "+str(int(angle)))
                     if angle>=-90 and angle<-45:
                         zone="secteur1"
-                        zone_num="-67"
+                        zone_num="-50"
                     elif angle>=-45 and angle<-10:
                         zone="secteur2"
                         zone_num="-22"
@@ -87,7 +77,7 @@ class database:
                         zone_num="22"
                     elif angle>=45 and angle<90:
                         zone="secteur5"
-                        zone_num="67"
+                        zone_num="50"
                     else:
                         print("ERROR")
                         
@@ -101,75 +91,23 @@ class database:
                     timer = datetime(int(timer[0]+timer[1]+timer[2]+timer[3]),int(timer[5]+timer[6]),int(timer[8]+timer[9]),int(timer[11]+timer[12]),int(timer[14]+timer[15]),int(timer[17]+timer[18]))
                     timer=datetime.now()-timer
                     timer=float(str(timer)[5:])+db[zone]
-                    self.update_db('positions',zone,timer)
-                    self.update_db('positions','Date_mesure','CURRENT_TIMESTAMP')
+                    cdb.update_db('positions',zone,timer)
+                    cdb.update_db('positions','Date_mesure','CURRENT_TIMESTAMP')
                     print("YES ANALYSE ...")
                     self.analyse(angle,zone_num,db)
                 else:
                     print("ERROR: TOO FAST")
-                    
-                
-        
-        
-    def update_db(self,fraum,zone,timer):
-        #ajouter zone lÃ 
-        sql = """\
-        UPDATE """+str(fraum)+""" SET """+str(zone)+"""="""+str(timer)+""" 
-        WHERE  enfant_id = """+str(enfant_id)
-        self.send_to_db(sql)
-        
-    def select_db(self,sql):
-        
-        try:
-            # On  créé une conexion MySQL
-            conn = MySQLdb.connect(**paramMysql)
-            # On créé un curseur MySQL
-            cur = conn.cursor(MySQLdb.cursors.DictCursor)
-            # On exécute la requÃªte SQL
-            cur.execute(sql)
-            # On récupère toutes les lignes du résultat de la requête
-            rows = cur.fetchall()
-            return rows
-        except MySQLdb.Error, e:
-            # En cas d'anomalie
-            print "Error %d: %s" % (e.args[0],e.args[1])
-         
-        
-
-    def send_to_db(self,sql):
-
-        try:
-            # On  créé une conexion MySQL
-            conn = MySQLdb.connect(**paramMysql)
-            # On créé un curseur MySQL
-            cur = conn.cursor()
-            try:
-                # On exécute la requête SQL
-                cur.execute(sql)
-                # On commit
-                conn.commit()
-            except MySQLdb.Error, e:
-                # En cas d'erreur on annule les modifications
-                conn.rollback()
-        
-        except MySQLdb.Error, e:
-            # En cas d'anomalie
-            print "Error %d: %s" % (e.args[0],e.args[1])
-            
-            
-
-
 
     def analyse(self,angle,zone_num,db):       
         
         #On les enregistre dans ce dico
-        secteur={"-67":int(db['secteur1']),"-22":int(db['secteur2']),
+        secteur={"-50":int(db['secteur1']),"-22":int(db['secteur2']),
                  "0":int(db['secteur3']),"22":int(db['secteur4']),
-                 '67':int(db['secteur5'])}
+                 '50':int(db['secteur5'])}
 
         # dans array on calcule le temps passé à gauche et à droite
-        array={"left":secteur["-67"]+secteur["-22"],
-        "right":secteur["67"]+secteur["22"],
+        array={"left":secteur["-50"]+secteur["-22"],
+        "right":secteur["50"]+secteur["22"],
         "middle":secteur["0"]}
         #On cherche dans array la zone la moins sollicité
         mini=array["left"]
@@ -188,15 +126,15 @@ class database:
 
         #on cherche dans la zone la moins sollicitée la tranche la moins sollicité
         if mini_key=="left":
-            if secteur["-67"]>secteur["-22"]:
+            if secteur["-50"]>secteur["-22"]:
                 key="-22"
             else:
-                key="-67"
+                key="-50"
         elif mini_key=="right":
-            if secteur["67"]>secteur["22"]:
+            if secteur["50"]>secteur["22"]:
                 key="22"
             else:
-                key="67"
+                key="50"
         else:
             key="0"
             
@@ -208,12 +146,17 @@ class database:
         #correspondant à la tranche la moins sollicitée de la zone la moins 
         #sollicitée les moteurs vont donc alors (en vérifiant l'angle obtenu au
         #fur et à mesure) déplacer l'enfant jusqu'à obtenir un angle convaincant
+        sql = """\
+            SELECT * FROM datas
+            WHERE enfant_id = """+str(cdb.enfant_id)
+        db=cdb.select_db(sql)[0]
+
         ecart=5
-        if array[maxi_key]-array[mini_key]>ecart and key!= zone_num :  
+        
+        if array[maxi_key]-array[mini_key]>ecart and key!= zone_num and db['alert']==0:  
             print("ACTION VALIDATED")
             self.save_action()
             mm.moveMotors(int(key),angle)
-            
             
     def save_action(self):
         today=str(datetime.now())[0:10]
@@ -221,22 +164,21 @@ class database:
         SELECT * FROM actions
         WHERE date = '"""+today+"""'
         """
-        print(sql)
+
         
-        rows=self.select_db(sql)[0]
-        
-        if 'enfant_id' in rows:
+        try :
+            rows=cdb.select_db(sql)[0]
             nb_action=rows['nb_action']+1
             sql = """\
             UPDATE actions SET nb_action="""+str(nb_action)+""" WHERE  date = '"""+today+"""'"""
-            self.send_to_db(sql)
-        else :
+            cdb.send_to_db(sql)
+        except IndexError :
             sql = """\
             INSERT INTO actions
             (`enfant_id`,`nb_action`,`date`)
             VALUES (1,1,CURRENT_TIMESTAMP)
             """
-            self.send_to_db(sql)
+            cdb.send_to_db(sql)
 #finally:
 # On ferme la connexion
 #if conn:

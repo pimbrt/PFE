@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 from math import sqrt
 def pre_traitement(image):
-    kernel = np.ones((40,40),np.uint8)
+    kernel = np.ones((23,28),np.uint8)
     image_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     image_canny = cv2.Canny(image_gray,70,70)
     image_final = cv2.morphologyEx(image_canny, cv2.MORPH_CLOSE, kernel)
